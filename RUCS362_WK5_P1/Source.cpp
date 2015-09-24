@@ -25,7 +25,7 @@
 using namespace std;
 
 enum personnel { LAWYER, PARALEGAL, ASSISTANT, EMPTY };
-personnel ;
+
 
 struct officeBuilding 
 {
