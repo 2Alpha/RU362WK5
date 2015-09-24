@@ -24,7 +24,30 @@
 
 using namespace std;
 
+enum personnel { LAWYER, PARALEGAL, ASSISTANT, EMPTY };
+personnel ;
+
+struct officeBuilding 
+{
+	int floor;
+	string Office;
+	personnel employeeType;
+};
+
+void Initialize2DArray();
+
+
 int main()
+{
+	Initialize2DArray;
+
+
+	system("PAUSE");
+	return 0;
+}
+
+
+void Initialize2DArray()
 {
 
 
