@@ -36,6 +36,7 @@ struct BuildingSchematic
 
 const int NUM_OF_FLOORS = 5;
 const int OFICES_PER_FLOOR = 8;
+const int IGNORE_AMOUNT = 100;
 const string INPUT_FILE_NAME = "BUILDING.bin"; // File name for input file
 
 void ProgramDescription();
@@ -43,8 +44,9 @@ void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES
 void readAndSortData(string inputFileName);
 
 void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR]);
+string convert2UpperCase(string stringInput);
 
-//readAndSortData()
+string statusModMunu();
 
 
 int main()
@@ -133,5 +135,80 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_P
 			
 		}
 	}
+
+}
+
+string statusModMunu()
+{
+		string response2Question;			// Response to question
+		bool repeatQuestion;				// Repeat question
+		do {
+
+			cout << endl;
+			cout << "Please choose an option by entering its corresponding letter" << endl;
+			cout << "1 - Change office from occupied to empty " << endl;
+			cout << "2 - Modify office occupant type" << endl;
+			cout << "3 - Change office from empty to occupied" << endl;
+			cout << "D - Done making modifications" << endl;
+			cout << endl;
+			cout << "Please enter response here: ";
+			cin >> response2Question;
+			cin.ignore(IGNORE_AMOUNT, '\n');
+
+			response2Question = convert2UpperCase(response2Question);
+
+
+			if ((response2Question != "1") && (response2Question != "2") && (response2Question != "3") && (response2Question != "D"))
+			{
+				cout << endl;
+				cout << "ERROR! Unrecognized input, please try again." << endl;
+				cout << endl;
+				repeatQuestion = true;
+			}
+
+			else
+			{
+				repeatQuestion = false;
+			}
+		}
+
+		// while repeat question equals true
+		while (repeatQuestion == true);
+
+
+		return response2Question;
+
+
+
+
+}
+
+string convert2UpperCase(string stringInput)
+{
+	int i = 0;  // variabel used for tracking index location in array
+	char c;		// variable used to temporaliy store character from string
+
+	string upperCasedString;		// A string where all the letters are uppercase  
+
+	while (stringInput[i] != '\0')
+	{
+		// if character is a letter 
+		if (isalpha(stringInput[i]))
+		{
+			c = stringInput[i];
+			stringInput[i] = toupper(c);
+			i++;
+		}
+
+		else
+		{
+			i++;
+		}
+
+	}
+
+	upperCasedString = stringInput;
+
+	return upperCasedString;
 
 }
