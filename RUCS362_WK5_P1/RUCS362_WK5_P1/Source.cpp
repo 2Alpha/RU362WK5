@@ -51,7 +51,7 @@ string statusModMunu();
 
 int main()
 {
-	
+	string OptionDesired; 
 	BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR];
 
 	// Initialize a two-dimensional array, representing the offices in the building, to all EMPTY offices.
@@ -61,6 +61,17 @@ int main()
 
 	showBuidlingConfig(officeBuilding);
 
+	
+	
+	do
+	{
+		OptionDesired = statusModMunu();
+
+
+	}
+
+	// While response does not equal exit  
+	while (OptionDesired != "D");
 	system("PAUSE");
 	return 0;
 }
@@ -145,7 +156,7 @@ string statusModMunu()
 		do {
 
 			cout << endl;
-			cout << "Please choose an option by entering its corresponding letter" << endl;
+			cout << "Please choose an option by entering its corresponding character" << endl;
 			cout << "1 - Change office from occupied to empty " << endl;
 			cout << "2 - Modify office occupant type" << endl;
 			cout << "3 - Change office from empty to occupied" << endl;
@@ -182,6 +193,15 @@ string statusModMunu()
 
 
 }
+
+void empty2occupied(string optionSelected){	cout << "You selected" << optionSelecetd << "Change office from empty to occupied" << endl; }
+
+void occupied2Empty(string optionSelected){}
+void getFloorNumber()
+{
+
+}
+
 
 string convert2UpperCase(string stringInput)
 {
