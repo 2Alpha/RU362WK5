@@ -239,25 +239,27 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_P
 			
 			else if (OccupantType != EMPTY)
 			{
-				cout << "here!!!!!!!!!!!!!!!!!!" << endl; 
+
 				if (officeBuilding[rowPosition][columnPosition].occupantType != EMPTY)
 				{
-
+	
 					cout << setw(5) << rowPosition << char(columnPosition + 65);
-					if (char(columnPosition + 65) == 'H')
-					{
-						cout << endl;
-					}
-
-					else if (officeBuilding[rowPosition][columnPosition].occupantType == EMPTY)
+				}
+					
+				else if (officeBuilding[rowPosition][columnPosition].occupantType == EMPTY)
 					{
 						cout << setw(6) << "--";
-						if (char(columnPosition + 65) == 'H')
-						{
-							cout << endl;
-						}
 					}
+				
+
+				if (char(columnPosition + 65) == 'H')
+				{
+					
+					cout << endl;
 				}
+
+
+
 			}
 		}
 	}
@@ -312,39 +314,78 @@ string statusModMunu()
 
 void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
-	cout << "See Below for a Buiding map depicting the occupied offices" << endl << endl;
+	
 
 	if ((optionSelected == "1") && (OccupantStatistics.emptyOffices != 40))
 	{
+		cout << "See Below for a Buiding map depicting the occupied offices" << endl << endl;
+
 		int floorNumber;
 		string officeLetter;
 		personnel OccupantType;
 
 		cout << "IN OCUPIED" << endl; 
 		showBuidlingConfig(officeBuilding, LAWYER);
+
+		do
+		{
+			floorNumber = getFloorNumber(LOW_FLOOR, HIGH_FLOOR);
+			officeLetter = getOfficeLetter();
+			OccupantType = getOccupantType();
+
+			if (OccupantType != EMPTY);
+			{
+				cout << "ERROR! Only an occupant tupe of Empty can be selected " << endl;
+			}
+		}
+
+		while (OccupantType != EMPTY);
+
+	}
+
+
+
+	else if ((optionSelected == "1") && (OccupantStatistics.emptyOffices == 40))
+	{
+		cout << "ERROR! The buiding does not have any occupied offices" << endl;
 	}
 }
 
 void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
-	cout << "See Below for a Buiding map depicting the empty offices" << endl << endl;
+	
 
 	if ((optionSelected == "3") && (OccupantStatistics.emptyOffices > 0))
 	{
+		cout << "See Below for a Buiding map depicting the empty offices" << endl << endl;
+
 		int floorNumber;
 		string officeLetter;
 		personnel OccupantType;
 
 		showBuidlingConfig(officeBuilding, EMPTY);
 
-		floorNumber = getFloorNumber(LOW_FLOOR, HIGH_FLOOR);
-		officeLetter = getOfficeLetter();
-		OccupantType = getOccupantType();
+		do
+		{
+			floorNumber = getFloorNumber(LOW_FLOOR, HIGH_FLOOR);
+			officeLetter = getOfficeLetter();
+			OccupantType = getOccupantType();
+
+			if (OccupantType == EMPTY)
+			{
+				cout << "ERROR! The office you selected is already empty. Try Again." << endl;
+			}
+
+		}
+
+		while (OccupantType == EMPTY);
+
 
 		officeBuilding[floorNumber][(((int) officeLetter[0]) - 65)].occupantType = OccupantType;
 		
 		updateBuidlingStats(officeBuilding, OccupantStatistics);
 
+		 
 
 
 	}
@@ -436,11 +477,12 @@ personnel getOccupantType()
 		cout << "L = Lawyer " << endl;
 		cout << "P = Paralegal " << endl;
 		cout << "A = Assistant" << endl;
+		cout << "E = Empty" << endl;
 		cout << "Enter Office Type Here: "; 
 		cin >> occupantTypeEntered;
 		occupantTypeEntered = convert2UpperCase(occupantTypeEntered);
 
-		if ((occupantTypeEntered != "L") && (occupantTypeEntered != "P") && (occupantTypeEntered != "A"))
+		if ((occupantTypeEntered != "L") && (occupantTypeEntered != "P") && (occupantTypeEntered != "A") && (occupantTypeEntered != "E"))
 		{
 			cin.clear();
 			cin.ignore(IGNORE_AMOUNT, '\n');
@@ -470,6 +512,10 @@ personnel getOccupantType()
 		jobTitle = ASSISTANT;
 	}
 
+	else if (occupantTypeEntered == "E")
+	{
+		jobTitle = EMPTY;
+	}
 
 	return jobTitle; 
 
