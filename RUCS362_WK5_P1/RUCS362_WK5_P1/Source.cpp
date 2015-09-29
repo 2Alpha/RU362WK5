@@ -11,9 +11,15 @@
 //  CLASS/TERM:  CS362_X40_Data Structures - CU_CS362 - XIN_X40_15F8W1
 //  DESIGNER:	 Andrae Allen
 //  FUNCTIONS:	 main - reads values, performs calculations, & displays results
-//               ProgramDescription - Displays a brief discription of the program
-//				 xxxxxxxxxxxxxxxxxx - 
-//				 xxxxxxxxxxxxxxxxxx - 
+//               InitializeBldg2Empty- Displays a brief discription of the program
+//				 readAndSortData - 
+//				 updateBuidlingStats - 
+//				 empty2Occupied -
+//				 xxxxxxxxxxxxxxxxxx -
+//				 xxxxxxxxxxxxxxxxxx -
+//				 xxxxxxxxxxxxxxxxxx -
+//				 xxxxxxxxxxxxxxxxxx -
+//				 xxxxxxxxxxxxxxxxxx -
 //***************************************************************************
 
 #include <iostream> 
@@ -43,44 +49,58 @@ struct OccupantStats
 	int emptyOffices; 
 };
 
-const int LOW_FLOOR = 0;
-const int HIGH_FLOOR = 4; 
+const int LOW_FLOOR = 0;			// Lowest floor in building
+const int HIGH_FLOOR = 4;			// Highest Floor in building
 
-const int NUM_OF_FLOORS = 5;
-const int OFICES_PER_FLOOR = 8;
-const int TOTAL_OFFICES = 40; 
-const int IGNORE_AMOUNT = 999;
-const string INPUT_FILE_NAME = "BUILDING.bin"; // File name for input file
+const int NUM_OF_FLOORS = 5;		// Total number of floors 
+const int OFFICES_PER_FLOOR = 8;	// Offices per floor
+const int TOTAL_OFFICES = 40;		// Total Offices 
+const int IGNORE_AMOUNT = 999;		// Ignore amount
+
+const int SET_WIDTH_5 = 5;
+const int SET_WIDTH_6 = 6;
+const int SET_WIDTH_7 = 7; 
+const int ASCII_CONSTANT = 65;
+
+const string INPUT_FILE_NAME = "BUILDING.bin";		// File name for input file
+const string OUTPUT_FILE_NAME = "BUILDING.bin";		// File name for output file
 
 void ProgramDescription();
-void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR]);
-void readAndSortData(string inputFileName);
+void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR]);
+void readAndSortData(string inputFileName, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR]);
 
-void  updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
-void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
-void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
+void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
+void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
+void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
+void modifyOccupantType(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
+void DoneMakingMods(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics);
+void displayBuildingstats(OccupantStats& OccupantStatistics);
 
 string convert2UpperCase(string stringInput);
 int getFloorNumber(int min, int max);
-string  getOfficeLetter();
+string getOfficeLetter();
 personnel getOccupantType();
-
+string personnelAsString(personnel OccupantEnumForm);
 string statusModMunu();
+
+
+
 
 
 int main()
 {
 	int occupiedOfficeCount = 0;
 	string OptionDesired; 
-	BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR];
+	BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR];
 	OccupantStats OccupantStatistics; 
 
 	// Initialize a two-dimensional array, representing the offices in the building, to all EMPTY offices.
 	InitializeBldg2Empty(officeBuilding);
 
-	readAndSortData(INPUT_FILE_NAME);
+	readAndSortData(INPUT_FILE_NAME, officeBuilding);
 
 	updateBuidlingStats(officeBuilding, OccupantStatistics);
+	displayBuildingstats(OccupantStatistics);
 
 	
 	do
@@ -88,7 +108,10 @@ int main()
 		OptionDesired = statusModMunu();
 
 		occupied2Empty(OptionDesired, officeBuilding, OccupantStatistics);
+		modifyOccupantType(OptionDesired, officeBuilding, OccupantStatistics);
 		empty2Occupied(OptionDesired, officeBuilding, OccupantStatistics);
+		DoneMakingMods(OptionDesired, officeBuilding, OccupantStatistics);
+		
 	
 
 	}
@@ -110,14 +133,14 @@ void ProgramDescription()
 
 }
 
-void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR])
+void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR])
 {
 	int itemCounter = 0; 
 	
 
 	for (int rowPosition = 0; rowPosition < NUM_OF_FLOORS; rowPosition++)
 	{
-		for (int columnPosition = 0; columnPosition < OFICES_PER_FLOOR; columnPosition++)
+		for (int columnPosition = 0; columnPosition < OFFICES_PER_FLOOR; columnPosition++)
 		{
 			officeBuilding[rowPosition][columnPosition].occupantType = EMPTY;
 			itemCounter++;
@@ -127,7 +150,7 @@ void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES
 	/*
 	for (int rowPosition = 0; rowPosition < NUM_OF_FLOORS; rowPosition++)
 	{
-		for (int columnPosition = 0; columnPosition < OFICES_PER_FLOOR; columnPosition++)
+		for (int columnPosition = 0; columnPosition < OFFICES_PER_FLOOR; columnPosition++)
 		{
 			cout << officeBuilding[rowPosition][columnPosition].occupantType << endl; 
 		}
@@ -138,26 +161,39 @@ void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES
 	*/
 }
 
-void readAndSortData(string inputFileName)
+void readAndSortData(string inputFileName, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR])
 {
 	bool fileOpenSuccess;
 
-	ifstream inputFile; // input file stream variable
-	inputFile.open(inputFileName.c_str());
+	ifstream buildingConfigFile; // input file stream variable
 
-	if (!inputFile)
+	buildingConfigFile.open(inputFileName, ios::binary | ios::in);
+
+	if (!buildingConfigFile)
 	{
 		fileOpenSuccess = false;
 		cout << endl;
 		cerr << "Error! System could not open file named \"" << inputFileName << "\"" << endl;
 
+	}
 
-	
+	else
+	{
+
+		for (int rowPosition = 0; ((rowPosition < NUM_OF_FLOORS) && (buildingConfigFile)); rowPosition++)
+		{
+			for (int columnPosition = 0; ((columnPosition < OFFICES_PER_FLOOR) && (buildingConfigFile)); columnPosition++)
+			{
+				buildingConfigFile.read(reinterpret_cast<char*>(&officeBuilding[rowPosition][columnPosition]), sizeof(BuildingSchematic));
+			}
+		}
+
+		buildingConfigFile.close();
 
 	}
 }
 
-void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	OccupantStatistics.lawyerCount = 0; 
 	OccupantStatistics.paralegalCount = 0; 
@@ -167,7 +203,7 @@ void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_
 
 	for (int rowPosition = 0; rowPosition < NUM_OF_FLOORS; rowPosition++)
 	{
-		for (int columnPosition = 0; columnPosition < OFICES_PER_FLOOR; columnPosition++)
+		for (int columnPosition = 0; columnPosition < OFFICES_PER_FLOOR; columnPosition++)
 		{
 
 
@@ -181,7 +217,7 @@ void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_
 				OccupantStatistics.paralegalCount++;
 			}
 
-			else if (officeBuilding[rowPosition][columnPosition].occupantType == PARALEGAL)
+			else if (officeBuilding[rowPosition][columnPosition].occupantType == ASSISTANT)
 			{
 				OccupantStatistics.assistantsCount++;
 			}
@@ -207,11 +243,13 @@ void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_
 
 }
 
-void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], personnel OccupantType)
+void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], personnel OccupantType)
 {
+
+
 	for (int rowPosition = HIGH_FLOOR; rowPosition >= 0; rowPosition--)
 	{
-		for (int columnPosition = 0; columnPosition < OFICES_PER_FLOOR; columnPosition++)
+		for (int columnPosition = 0; columnPosition < OFFICES_PER_FLOOR; columnPosition++)
 		{
 
 			if (OccupantType == EMPTY)
@@ -219,8 +257,8 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_P
 				if (officeBuilding[rowPosition][columnPosition].occupantType == OccupantType)
 				{
 
-					cout << setw(5) << rowPosition << char(columnPosition + 65);
-					if (char(columnPosition + 65) == 'H')
+					cout << setw(SET_WIDTH_5) << rowPosition << char(columnPosition + ASCII_CONSTANT);
+					if (char(columnPosition + ASCII_CONSTANT) == 'H')
 					{
 						cout << endl;
 					}
@@ -228,8 +266,8 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_P
 
 				else if (officeBuilding[rowPosition][columnPosition].occupantType != OccupantType)
 				{
-					cout << setw(6) << "--";
-					if (char(columnPosition + 65) == 'H')
+					cout << setw(SET_WIDTH_6) << "--";
+					if (char(columnPosition + ASCII_CONSTANT) == 'H')
 					{
 						cout << endl;
 					}
@@ -243,16 +281,16 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_P
 				if (officeBuilding[rowPosition][columnPosition].occupantType != EMPTY)
 				{
 	
-					cout << setw(5) << rowPosition << char(columnPosition + 65);
+					cout << setw(SET_WIDTH_6) << rowPosition << char(columnPosition + ASCII_CONSTANT);
 				}
 					
 				else if (officeBuilding[rowPosition][columnPosition].occupantType == EMPTY)
 					{
-						cout << setw(6) << "--";
+						cout << setw(SET_WIDTH_6) << "--";
 					}
 				
 
-				if (char(columnPosition + 65) == 'H')
+				if (char(columnPosition + ASCII_CONSTANT) == 'H')
 				{
 					
 					cout << endl;
@@ -265,7 +303,27 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_P
 	}
 }
 
+void displayBuildingstats(OccupantStats& OccupantStatistics)
+{
+	int workerCount; 
+	int totalOffices;
+	
+	cout << endl; 
+	cout << "Current Building Statistics" << endl; 
+	cout << setw(SET_WIDTH_7) << OccupantStatistics.lawyerCount << " Lawyers" << endl;
+	cout << setw(SET_WIDTH_7) << OccupantStatistics.paralegalCount << " Paralegals" << endl;
+	cout << setw(SET_WIDTH_7) << OccupantStatistics.assistantsCount << " Assistants" << endl;
+	cout << setw(SET_WIDTH_7) << "---" << endl;
 
+	workerCount = OccupantStatistics.lawyerCount + OccupantStatistics.paralegalCount + OccupantStatistics.assistantsCount;
+	totalOffices = NUM_OF_FLOORS * OFFICES_PER_FLOOR;
+
+
+	cout << setw(SET_WIDTH_7) << workerCount << " occupied offices" << endl;
+	cout << setw(SET_WIDTH_7) << totalOffices - workerCount << " empty offices" << endl;
+	cout << setw(SET_WIDTH_7) << totalOffices << " Total offices" << endl;
+
+}
 
 string statusModMunu()
 {
@@ -312,11 +370,11 @@ string statusModMunu()
 
 }
 
-void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	
 
-	if ((optionSelected == "1") && (OccupantStatistics.emptyOffices != 40))
+	if ((optionSelected == "1") && (OccupantStatistics.emptyOffices != TOTAL_OFFICES))
 	{
 		cout << "See Below for a Buiding map depicting the occupied offices" << endl << endl;
 
@@ -324,7 +382,6 @@ void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM
 		string officeLetter;
 		personnel OccupantType;
 
-		cout << "IN OCUPIED" << endl; 
 		showBuidlingConfig(officeBuilding, LAWYER);
 
 		do
@@ -333,25 +390,83 @@ void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM
 			officeLetter = getOfficeLetter();
 			OccupantType = getOccupantType();
 
-			if (OccupantType != EMPTY);
+			if (OccupantType != EMPTY)
 			{
-				cout << "ERROR! Only an occupant tupe of Empty can be selected " << endl;
+				cout << "ERROR! Only an occupant type of Empty can be selected " << endl;
 			}
 		}
 
 		while (OccupantType != EMPTY);
 
+		officeBuilding[floorNumber][(((int)officeLetter[0]) - ASCII_CONSTANT)].occupantType = OccupantType;
+		updateBuidlingStats(officeBuilding, OccupantStatistics);
+
+		cout << endl;
+		cout << "Success!  Office " << floorNumber << officeLetter << " is now empty." << endl;
+		displayBuildingstats(OccupantStatistics);
+
 	}
 
 
 
-	else if ((optionSelected == "1") && (OccupantStatistics.emptyOffices == 40))
+	else if ((optionSelected == "1") && (OccupantStatistics.emptyOffices == TOTAL_OFFICES))
 	{
 		cout << "ERROR! The buiding does not have any occupied offices" << endl;
 	}
 }
 
-void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+
+void modifyOccupantType(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+{
+	
+	
+
+	if ((optionSelected == "2") && (OccupantStatistics.emptyOffices != TOTAL_OFFICES))
+	{
+		cout << "See Below for a Buiding map depicting the occupied offices" << endl << endl;
+
+		int floorNumber;
+		string officeLetter;
+		personnel OccupantType;
+
+		showBuidlingConfig(officeBuilding, LAWYER);
+
+		do
+		{
+			floorNumber = getFloorNumber(LOW_FLOOR, HIGH_FLOOR);
+			officeLetter = getOfficeLetter();
+			OccupantType = getOccupantType();
+
+			if ((OccupantType == EMPTY) || (officeBuilding[floorNumber][(((int)officeLetter[0]) - ASCII_CONSTANT)].occupantType == EMPTY))
+			{
+				cout << "ERROR! This option only allows occupant to occupant modifications" << endl;
+				cout << "This means you cannot modify an office that is already empty," << endl;
+				cout << "and you cannot change an existing occupant to empty. Try again.4" << endl; 
+			}
+		}
+
+		while ((OccupantType == EMPTY) || (officeBuilding[floorNumber][(((int)officeLetter[0]) - ASCII_CONSTANT)].occupantType == EMPTY));
+
+		officeBuilding[floorNumber][(((int)officeLetter[0]) - ASCII_CONSTANT)].occupantType = OccupantType;
+		updateBuidlingStats(officeBuilding, OccupantStatistics);
+
+		cout << "Success!  Office " << floorNumber << officeLetter << " is now occupied  by a " << personnelAsString(OccupantType) << endl;
+		displayBuildingstats(OccupantStatistics);
+	}
+
+	else if ((optionSelected == "2") && (OccupantStatistics.emptyOffices == TOTAL_OFFICES))
+	{
+		cout << "ERROR! The buiding is completely empty" << endl;
+		cout << "Therefore occupant to occupant modifications cannot be made" << endl; 
+	}
+
+
+}
+
+
+
+
+void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	
 
@@ -381,22 +496,50 @@ void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM
 		while (OccupantType == EMPTY);
 
 
-		officeBuilding[floorNumber][(((int) officeLetter[0]) - 65)].occupantType = OccupantType;
+		officeBuilding[floorNumber][(((int)officeLetter[0]) - ASCII_CONSTANT)].occupantType = OccupantType;
 		
 		updateBuidlingStats(officeBuilding, OccupantStatistics);
 
-		 
+		cout << "Success!  Office " << floorNumber << officeLetter << " is now occupied  by a " << personnelAsString(OccupantType) << endl;
+		displayBuildingstats(OccupantStatistics);
 
 
 	}
 
-	else if (OccupantStatistics.emptyOffices == 0)
+	else if ((optionSelected == "3") && (OccupantStatistics.emptyOffices == 0))
 	{
 		cout << "ERROR! the buiding does not have an empty office available" << endl;
 	}
 
-
 	
+}
+
+void  DoneMakingMods(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+{
+
+	if (optionSelected == "D")
+	{
+		ofstream buildingConfigFile;
+
+		buildingConfigFile.open(OUTPUT_FILE_NAME, ios::binary | ios::out);
+
+		for (int rowPosition = 0; rowPosition < NUM_OF_FLOORS; rowPosition++)
+		{
+			for (int columnPosition = 0; columnPosition < OFFICES_PER_FLOOR; columnPosition++)
+			{
+				buildingConfigFile.write(reinterpret_cast<char*>(&officeBuilding[rowPosition][columnPosition]), sizeof(BuildingSchematic));
+			}
+		}
+		
+
+
+		buildingConfigFile.close();
+		
+		cout << "Changes have been saved to file, the program will now exit." << endl; 
+
+		displayBuildingstats(OccupantStatistics);
+	}
+
 }
 
 
@@ -552,3 +695,30 @@ string convert2UpperCase(string stringInput)
 
 }
 
+string personnelAsString (personnel OccupantEnumForm)
+{
+	string jobTitle;
+
+	if (OccupantEnumForm == LAWYER)
+	{
+		jobTitle = "Lawyer";
+	}
+
+	else if (OccupantEnumForm == PARALEGAL)
+	{
+		jobTitle = "Paralegal";
+	}
+
+	else if (OccupantEnumForm == ASSISTANT)
+	{
+		jobTitle = "Assistant";
+	}
+
+	else if (OccupantEnumForm == EMPTY)
+	{
+		jobTitle = "Empty";
+	}
+
+	return jobTitle;
+
+}
