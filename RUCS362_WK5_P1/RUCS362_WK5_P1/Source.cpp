@@ -1,25 +1,25 @@
 //***************************************************************************
 //  FILENAME:	 AllenAssn4.cpp
-//  DESCRIPTION: Program that will implement the following. 
-// 				 1. 
-//				 2. 
-//				 3. 
-//				 4. 
-//				 5. 
+//  DESCRIPTION: Office building management program
 //
 //  DATE:        9/10/15
 //  CLASS/TERM:  CS362_X40_Data Structures - CU_CS362 - XIN_X40_15F8W1
 //  DESIGNER:	 Andrae Allen
 //  FUNCTIONS:	 main - reads values, performs calculations, & displays results
 //               InitializeBldg2Empty- Displays a brief discription of the program
-//				 readAndSortData - 
-//				 updateBuidlingStats - 
-//				 empty2Occupied -
-//				 xxxxxxxxxxxxxxxxxx -
-//				 xxxxxxxxxxxxxxxxxx -
-//				 xxxxxxxxxxxxxxxxxx -
-//				 xxxxxxxxxxxxxxxxxx -
-//				 xxxxxxxxxxxxxxxxxx -
+//				 readAndSortData - Read and sort data from binary file 
+//				 updateBuidlingStats - Update building statistics 
+//				 empty2Occupied - Change office from empty to occupied
+//				 occupied2Empty - Change office from occupied to empty
+//				 modifyOccupantType - Modify occupant type  
+//				 DoneMakingMods - Done Making Modifications 
+//				 displayBuildingstats - Display building statistics to screen
+//				 convert2UpperCase - Convert to uppercase
+//				 getFloorNumber - Get floor number
+//				 getOfficeLetter - Get office letter
+//				 getOccupantType- Get occupant type
+//				 personnelAsString - Convert Enumerated Personnel to string format
+//				 statusModMunu - Display status and modification menu
 //***************************************************************************
 
 #include <iostream> 
@@ -57,10 +57,10 @@ const int OFFICES_PER_FLOOR = 8;	// Offices per floor
 const int TOTAL_OFFICES = 40;		// Total Offices 
 const int IGNORE_AMOUNT = 999;		// Ignore amount
 
-const int SET_WIDTH_5 = 5;
-const int SET_WIDTH_6 = 6;
-const int SET_WIDTH_7 = 7; 
-const int ASCII_CONSTANT = 65;
+const int SET_WIDTH_5 = 5;			// Set Width 5 
+const int SET_WIDTH_6 = 6;			// Set Width 6 
+const int SET_WIDTH_7 = 7;			// Set Width 7 
+const int ASCII_CONSTANT = 65;		// ascii conversion constant
 
 const string INPUT_FILE_NAME = "BUILDING.bin";		// File name for input file
 const string OUTPUT_FILE_NAME = "BUILDING.bin";		// File name for output file
@@ -89,14 +89,16 @@ string statusModMunu();
 
 int main()
 {
-	int occupiedOfficeCount = 0;
-	string OptionDesired; 
+	int occupiedOfficeCount = 0;					// occupied office count 
+	string OptionDesired;							// option desired 
+
 	BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR];
 	OccupantStats OccupantStatistics; 
 
 	// Initialize a two-dimensional array, representing the offices in the building, to all EMPTY offices.
 	InitializeBldg2Empty(officeBuilding);
 
+	// read and sort data if .bin file exists 
 	readAndSortData(INPUT_FILE_NAME, officeBuilding);
 
 	updateBuidlingStats(officeBuilding, OccupantStatistics);
@@ -122,17 +124,25 @@ int main()
 	return 0;
 }
 
-
+//*************************************************************************
+//  FUNCTION:	  ProgramDescription
+//  DESCRIPTION:  Displays a brief discription of the program
+//  INPUT:        Parameters:  None
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void ProgramDescription()
 {
 
-	cout << "Program to implement the following:" << endl;
-	cout << "1. Check for BUILDING.BIN file upon first opening" << endl;
-
-
-
+	cout << "Office building management program" << endl << endl; 
+	
 }
 
+//*************************************************************************
+//  FUNCTION:	  InitializeBldg2Empty
+//  DESCRIPTION:  Displays a brief discription of the program
+//  INPUT:        Parameters:  None
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR])
 {
 	int itemCounter = 0; 
