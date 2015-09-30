@@ -6,9 +6,10 @@
 //  CLASS/TERM:  CS362_X40_Data Structures - CU_CS362 - XIN_X40_15F8W1
 //  DESIGNER:	 Andrae Allen
 //  FUNCTIONS:	 main - reads values, performs calculations, & displays results
-//               InitializeBldg2Empty- Displays a brief discription of the program
+//               InitializeBldg2Empty- Initialize all offices to empty
 //				 readAndSortData - Read and sort data from binary file 
 //				 updateBuidlingStats - Update building statistics 
+//				 showBuidlingConfig - Show building configuration
 //				 empty2Occupied - Change office from empty to occupied
 //				 occupied2Empty - Change office from occupied to empty
 //				 modifyOccupantType - Modify occupant type  
@@ -84,9 +85,6 @@ string personnelAsString(personnel OccupantEnumForm);
 string statusModMunu();
 
 
-
-
-
 int main()
 {
 	int occupiedOfficeCount = 0;					// occupied office count 
@@ -114,8 +112,6 @@ int main()
 		empty2Occupied(OptionDesired, officeBuilding, OccupantStatistics);
 		DoneMakingMods(OptionDesired, officeBuilding, OccupantStatistics);
 		
-	
-
 	}
 
 	// While response does not equal exit  
@@ -139,8 +135,9 @@ void ProgramDescription()
 
 //*************************************************************************
 //  FUNCTION:	  InitializeBldg2Empty
-//  DESCRIPTION:  Displays a brief discription of the program
-//  INPUT:        Parameters:  None
+//  DESCRIPTION:  Initialize all offices to empty
+//  INPUT:        Parameters: officeBuilding - Struct containing building occupant data 
+//
 //  OUTPUT: 	  Return value: None
 //*************************************************************************
 void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR])
@@ -152,11 +149,13 @@ void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICE
 	{
 		for (int columnPosition = 0; columnPosition < OFFICES_PER_FLOOR; columnPosition++)
 		{
-			officeBuilding[rowPosition][columnPosition].occupantType = EMPTY;
+			//officeBuilding[rowPosition][columnPosition].occupantType = EMPTY;
+			officeBuilding[rowPosition][columnPosition].occupantType = LAWYER;
 			itemCounter++;
 		}
 	}
 
+	// debugging section below
 	/*
 	for (int rowPosition = 0; rowPosition < NUM_OF_FLOORS; rowPosition++)
 	{
@@ -171,6 +170,14 @@ void InitializeBldg2Empty(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICE
 	*/
 }
 
+//*************************************************************************
+//  FUNCTION:	  readAndSortData
+//  DESCRIPTION:  Read and sort data from binary file
+//  INPUT:        Parameters: inputFileName - Input file name
+//							  officeBuilding - Struct containing building occupant data 
+//
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void readAndSortData(string inputFileName, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR])
 {
 	bool fileOpenSuccess;
@@ -179,6 +186,7 @@ void readAndSortData(string inputFileName, BuildingSchematic officeBuilding[NUM_
 
 	buildingConfigFile.open(inputFileName, ios::binary | ios::in);
 
+	// if .bin file does not open
 	if (!buildingConfigFile)
 	{
 		fileOpenSuccess = false;
@@ -189,7 +197,7 @@ void readAndSortData(string inputFileName, BuildingSchematic officeBuilding[NUM_
 
 	else
 	{
-
+		cout << "Exisiting file named " << INPUT_FILE_NAME << " has been loaded" << endl; 
 		for (int rowPosition = 0; ((rowPosition < NUM_OF_FLOORS) && (buildingConfigFile)); rowPosition++)
 		{
 			for (int columnPosition = 0; ((columnPosition < OFFICES_PER_FLOOR) && (buildingConfigFile)); columnPosition++)
@@ -203,6 +211,14 @@ void readAndSortData(string inputFileName, BuildingSchematic officeBuilding[NUM_
 	}
 }
 
+//*************************************************************************
+//  FUNCTION:	  updateBuidlingStats
+//  DESCRIPTION:  Update building statistics
+//  INPUT:        Parameters: officeBuilding - Struct  containing building occupant data
+//							  OccupantStatistics- struct that manages occupant statistics 
+//
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	OccupantStatistics.lawyerCount = 0; 
@@ -253,6 +269,14 @@ void updateBuidlingStats(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES
 
 }
 
+//*************************************************************************
+//  FUNCTION:	  showBuidlingConfig
+//  DESCRIPTION:  Update building statistics
+//  INPUT:        Parameters: officeBuilding - Struct containing building occupant data
+//							  OccupantType - Struct containing occupant types 
+//
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], personnel OccupantType)
 {
 
@@ -313,10 +337,17 @@ void showBuidlingConfig(BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_
 	}
 }
 
+//*************************************************************************
+//  FUNCTION:	  displayBuildingstats
+//  DESCRIPTION:  Display building statistics to screen
+//  INPUT:        Parameters: OccupantStatistics - struct that manages occupant statistics
+//
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void displayBuildingstats(OccupantStats& OccupantStatistics)
 {
-	int workerCount; 
-	int totalOffices;
+	int workerCount;					// worker count 
+	int totalOffices;					// total offices
 	
 	cout << endl; 
 	cout << "Current Building Statistics" << endl; 
@@ -335,6 +366,13 @@ void displayBuildingstats(OccupantStats& OccupantStatistics)
 
 }
 
+//*************************************************************************
+//  FUNCTION:	  statusModMunu
+//  DESCRIPTION:  Display status and modification menu
+//  INPUT:        Parameters: None
+//
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 string statusModMunu()
 {
 		string response2Question;			// Response to question
@@ -380,7 +418,15 @@ string statusModMunu()
 
 }
 
-void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+//*************************************************************************
+//  FUNCTION:	  occupied2Empty
+//  DESCRIPTION:  Change office from occupied to empty
+//  INPUT:        Parameters: optionSelected - Option selected 
+//							  officeBuilding - Struct containing building occupant data
+//							  OccupantStatistics - Struct that manages occupant statistics
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
+void occupied2Empty (string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	
 
@@ -388,9 +434,9 @@ void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM
 	{
 		cout << "See Below for a Buiding map depicting the occupied offices" << endl << endl;
 
-		int floorNumber;
-		string officeLetter;
-		personnel OccupantType;
+		int floorNumber;								// floor number 
+		string officeLetter;							// office letter 
+		personnel OccupantType;							// occupant type
 
 		showBuidlingConfig(officeBuilding, LAWYER);
 
@@ -426,6 +472,14 @@ void occupied2Empty(string& optionSelected, BuildingSchematic officeBuilding[NUM
 }
 
 
+//*************************************************************************
+//  FUNCTION:	  modifyOccupantTyp
+//  DESCRIPTION:  Modify occupant type
+//  INPUT:        Parameters: optionSelected - Option selected 
+//							  officeBuilding - Struct containing building occupant data
+//							  OccupantStatistics - Struct that manages occupant statistics
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
 void modifyOccupantType(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	
@@ -435,9 +489,9 @@ void modifyOccupantType(string& optionSelected, BuildingSchematic officeBuilding
 	{
 		cout << "See Below for a Buiding map depicting the occupied offices" << endl << endl;
 
-		int floorNumber;
-		string officeLetter;
-		personnel OccupantType;
+		int floorNumber;								// floor number 
+		string officeLetter;							// office letter 
+		personnel OccupantType;							// occupant type 
 
 		showBuidlingConfig(officeBuilding, LAWYER);
 
@@ -475,8 +529,15 @@ void modifyOccupantType(string& optionSelected, BuildingSchematic officeBuilding
 
 
 
-
-void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+//*************************************************************************
+//  FUNCTION:	  empty2Occupied
+//  DESCRIPTION:  Change office from empty to occupied
+//  INPUT:        Parameters: optionSelected - Option selected 
+//							  officeBuilding - Struct containing building occupant data
+//							  OccupantStatistics - Struct that manages occupant statistics
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
+void empty2Occupied (string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 	
 
@@ -484,9 +545,9 @@ void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM
 	{
 		cout << "See Below for a Buiding map depicting the empty offices" << endl << endl;
 
-		int floorNumber;
-		string officeLetter;
-		personnel OccupantType;
+		int floorNumber;								// floor number
+		string officeLetter;							// office letter 
+		personnel OccupantType;							// occupant type
 
 		showBuidlingConfig(officeBuilding, EMPTY);
 
@@ -524,7 +585,15 @@ void empty2Occupied(string& optionSelected, BuildingSchematic officeBuilding[NUM
 	
 }
 
-void  DoneMakingMods(string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
+//*************************************************************************
+//  FUNCTION:	  DoneMakingMods
+//  DESCRIPTION:  Done Making Modifications
+//  INPUT:        Parameters: optionSelected - Option selected 
+//							  officeBuilding - Struct containing building occupant data
+//							  OccupantStatistics - Struct that manages occupant statistics
+//  OUTPUT: 	  Return value: None
+//*************************************************************************
+void  DoneMakingMods (string& optionSelected, BuildingSchematic officeBuilding[NUM_OF_FLOORS][OFFICES_PER_FLOOR], OccupantStats& OccupantStatistics)
 {
 
 	if (optionSelected == "D")
@@ -553,11 +622,17 @@ void  DoneMakingMods(string& optionSelected, BuildingSchematic officeBuilding[NU
 }
 
 
-
-int getFloorNumber(int min, int max)
+//*************************************************************************
+//  FUNCTION:	  getFloorNumber
+//  DESCRIPTION:  Get floor number
+//  INPUT:        Parameters: min  - low number 
+//							  max - high number
+//  OUTPUT: 	  Return value: int num - floor number 
+//*************************************************************************
+int getFloorNumber (int min, int max)
 {
 	int num;
-	int errorCounter = 0;
+	int errorCounter = 0;		// error counter 
 
 	do
 	{
@@ -577,7 +652,7 @@ int getFloorNumber(int min, int max)
 	}
 
 
-
+	// While error counter greater than 0 
 	while (errorCounter > 0);
 
 
@@ -585,11 +660,17 @@ int getFloorNumber(int min, int max)
 	
 }
 
-string  getOfficeLetter()
+//*************************************************************************
+//  FUNCTION:	  getOfficeLetter
+//  DESCRIPTION:  Get office letter 
+//  INPUT:        Parameters: None 
+//  OUTPUT: 	  Return value: string officeLetterEntered - Office letter entered  
+//*************************************************************************
+string getOfficeLetter ()
 {
 	
-	string officeLetterEntered;
-	int errorCounter;
+	string officeLetterEntered;			// office letter entered 
+	int errorCounter;					// error counter 
 
 	do
 	{
@@ -616,12 +697,18 @@ string  getOfficeLetter()
 
 }
 
-personnel getOccupantType()
+//*************************************************************************
+//  FUNCTION:	  getOccupantType
+//  DESCRIPTION:  Get ocupant type 
+//  INPUT:        Parameters: None 
+//  OUTPUT: 	  Return value: personnel jobTitle - job title   
+//*************************************************************************
+personnel getOccupantType ()
 {
-	int errorCounter;
-	string occupantTypeEntered;
+	int errorCounter;						// error counter 
+	string occupantTypeEntered;				// occupant type entered 
 	
-	personnel jobTitle; 
+	personnel jobTitle;						// job title
 
 	do
 	{
@@ -675,6 +762,12 @@ personnel getOccupantType()
 
 }
 
+//*************************************************************************
+//  FUNCTION:	  convert2UpperCase
+//  DESCRIPTION:  Convert string letters to uppercase 
+//  INPUT:        Parameters: stringInput - String input  
+//  OUTPUT: 	  Return value: string  upperCasedString - Uppercased string   
+//*************************************************************************
 string convert2UpperCase(string stringInput)
 {
 	int i = 0;  // variabel used for tracking index location in array
@@ -705,6 +798,12 @@ string convert2UpperCase(string stringInput)
 
 }
 
+//*************************************************************************
+//  FUNCTION:	  personnelAsString
+//  DESCRIPTION:  Convert Enumerated Personnel to string format 
+//  INPUT:        Parameters: OccupantEnumForm - occupant type in enumerated form  
+//  OUTPUT: 	  Return value: string jobTitle - occupant type in string form    
+//*************************************************************************
 string personnelAsString (personnel OccupantEnumForm)
 {
 	string jobTitle;
